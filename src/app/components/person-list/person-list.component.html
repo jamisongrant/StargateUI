@@ -1,0 +1,73 @@
+<div>
+    <h2>People</h2>
+    <table *ngIf="people.length > 0; else noPeople">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Current Rank</th>
+          <th>Current Duty Title</th>
+          <th>Career Start Date</th>
+          <th>Career End Date</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let person of people">
+          <td>{{ person.personId }}</td>
+          <td>{{ person.name }}</td>
+          <td>{{ person.currentRank }}</td>
+          <td>{{ person.currentDutyTitle }}</td>
+          <td>{{ person.careerStartDate | date }}</td>
+          <td>{{ person.careerEndDate | date }}</td>
+          <td><button (click)="selectPerson(person)">Select</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noPeople>
+      <p>No people available.</p>
+    </ng-template>
+  
+    <div *ngIf="selectedPerson">
+      <h3>Person Detail</h3>
+      <p>ID: {{ selectedPerson.personId }}</p>
+      <p>Name: {{ selectedPerson.name }}</p>
+      <p>Current Rank: {{ selectedPerson.currentRank }}</p>
+      <p>Current Duty Title: {{ selectedPerson.currentDutyTitle }}</p>
+      <p>Career Start Date: {{ selectedPerson.careerStartDate | date }}</p>
+      <p>Career End Date: {{ selectedPerson.careerEndDate | date }}</p>
+    </div>
+  
+    <div *ngIf="astronautDetail">
+      <h3>Astronaut Detail</h3>
+      <p>Current Duty Title: {{ astronautDetail.currentDutyTitle }}</p>
+      <p>Current Rank: {{ astronautDetail.currentRank }}</p>
+      <p>Career Start Date: {{ astronautDetail.careerStartDate | date }}</p>
+    </div>
+  
+    <div *ngIf="astronautDuties && astronautDuties.length > 0">
+      <h3>Astronaut Duties</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Rank</th>
+            <th>Duty Title</th>
+            <th>Duty Start Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let duty of astronautDuties">
+            <td>{{ duty.name }}</td>
+            <td>{{ duty.rank }}</td>
+            <td>{{ duty.dutyTitle }}</td>
+            <td>{{ duty.dutyStartDate | date }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="astronautDuties && astronautDuties.length === 0">
+      <p>No duties assigned.</p>
+    </div>
+  </div>
+  
