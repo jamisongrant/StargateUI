@@ -1,0 +1,11 @@
+<div>
+    <h2>Add Person</h2>
+    <form (ngSubmit)="addPerson()">
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" [(ngModel)]="name" name="name" required>
+      </div>
+      <button type="submit">Add Person</button>
+    </form>
+</div>
+  

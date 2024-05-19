@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 export interface Person {
   personId: number;
@@ -32,52 +32,54 @@ export interface AstronautDuty {
 export class PersonService {
   private apiUrl = '/api/Person/People';  // For fetching all people
   private personUrl = '/api/Person';      // Base URL for fetching a single person
-  private astronautDetailUrl = '/api/AstronautDetail'; // Base URL for fetching astronaut details
-  private astronautDutyUrl = '/api/AstronautDuty'; // Base URL for fetching astronaut duties
 
   constructor(private http: HttpClient) { }
 
   getPeople(): Observable<Person[]> {
     return this.http.get<any>(this.apiUrl).pipe(
       map(response => {
-        // Extract the people array from the response
         return response.people || [];
       }),
       catchError(() => {
-        // Handle errors by returning an empty array
         return of([]);
       })
     );
   }
 
-  getPersonByName(name: string): Observable<Person | null> {
-    return this.http.get<any>(`${this.personUrl}/${name}`).pipe(
-      map(response => {
-        // Extract the person object from the response
-        return response.person || null;
-      }),
-      catchError(() => {
-        // Handle errors by returning null
-        return of(null);
-      })
+  createPerson(name: string): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(this.personUrl, JSON.stringify(name), { headers }).pipe(
+      catchError(this.handleError<any>('createPerson'))
+    );
+  }
+
+  updatePerson(person: Person): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put(`${this.personUrl}/${person.personId}`, person, { headers }).pipe(
+      catchError(this.handleError<any>('updatePerson'))
     );
   }
 
   getAstronautDetail(personId: number): Observable<AstronautDetail | null> {
-    return this.http.get<AstronautDetail>(`${this.astronautDetailUrl}/${personId}`).pipe(
+    return this.http.get<AstronautDetail>(`${this.personUrl}/AstronautDetail/${personId}`).pipe(
       catchError(() => {
-        // Handle errors by returning null
         return of(null);
       })
     );
   }
 
   getAstronautDuty(personId: number): Observable<AstronautDuty[] | null> {
-    return this.http.get<AstronautDuty[]>(`${this.astronautDutyUrl}/${personId}`).pipe(
+    return this.http.get<AstronautDuty[]>(`${this.personUrl}/AstronautDuty/${personId}`).pipe(
       catchError(() => {
-        // Handle errors by returning null
         return of(null);
       })
     );
+  }
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      return of(result as T);
+    };
   }
 }
