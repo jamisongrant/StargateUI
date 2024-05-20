@@ -9,6 +9,7 @@ import { AstronautDutyComponent } from './components/astronaut-duty/astronaut-du
 import { AppRoutingModule } from './app-routing.module';
 import { PersonDetailComponent } from './components/person-detail/person-detail.component';
 import { AddPersonComponent } from './components/add-person/add-person.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { AddPersonComponent } from './components/add-person/add-person.component
     AstronautDetailComponent,
     AstronautDutyComponent,
     PersonDetailComponent,
-    AddPersonComponent
+    AddPersonComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
