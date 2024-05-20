@@ -22,6 +22,7 @@ export class PersonListComponent implements OnInit {
   };
   addingPerson: boolean = false;
   editing: { [key: number]: boolean } = {};
+  imageCache: { [key: number]: string } = {};
 
   constructor(
     private personService: PersonService,
@@ -62,6 +63,11 @@ export class PersonListComponent implements OnInit {
       .subscribe(() => this.fetchPeople());
   }
 
+  cancelEdit(personId: number, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent triggering row selection
+    this.editing[personId] = false;
+  }
+
   addPerson(): void {
     this.addingPerson = true;
   }
@@ -92,5 +98,12 @@ export class PersonListComponent implements OnInit {
       careerStartDate: null,
       careerEndDate: null
     };
+  }
+
+  getRandomImage(personId: number): string {
+    if (!this.imageCache[personId]) {
+      this.imageCache[personId] = `https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 10)}.jpg`;
+    }
+    return this.imageCache[personId];
   }
 }

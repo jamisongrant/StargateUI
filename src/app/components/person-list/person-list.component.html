@@ -1,72 +1,89 @@
 <div class="container mt-4">
-  <h2>People</h2>
-  <table *ngIf="people.length > 0; else noPeople" class="table table-bordered table-hover">
-    <thead class="thead-light">
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Current Rank</th>
-        <th>Current Duty Title</th>
-        <th>Career Start Date</th>
-        <th>Career End Date</th>
-        <th>
-          <button class="btn btn-primary btn-sm" (click)="addPerson()">
-            <i class="fas fa-plus"></i>
-          </button>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngIf="addingPerson">
-        <td>#</td>
-        <td><input [(ngModel)]="newPerson.name" class="form-control" placeholder="Enter name"></td>
-        <td><input [(ngModel)]="newPerson.currentRank" class="form-control" placeholder="Enter rank"></td>
-        <td><input [(ngModel)]="newPerson.currentDutyTitle" class="form-control" placeholder="Enter duty title"></td>
-        <td><input [(ngModel)]="newPerson.careerStartDate" class="form-control" type="date"></td>
-        <td><input [(ngModel)]="newPerson.careerEndDate" class="form-control" type="date"></td>
-        <td>
-          <button class="btn btn-success btn-sm" (click)="saveNewPerson()">✔️</button>
-          <button class="btn btn-danger btn-sm" (click)="cancelAddPerson()">❌</button>
-        </td>
-      </tr>
-      <tr *ngFor="let person of people" (click)="selectPerson(person)" [class.table-active]="person === selectedPerson">
-        <td>{{ person.personId }}</td>
-        <td *ngIf="!editing[person.personId]">{{ person.name }}</td>
-        <td *ngIf="editing[person.personId]"><input [(ngModel)]="person.name" class="form-control"></td>
-        <td>{{ person.currentRank }}</td>
-        <td>{{ person.currentDutyTitle }}</td>
-        <td>{{ person.careerStartDate | date }}</td>
-        <td>{{ person.careerEndDate | date }}</td>
-        <td>
-          <button *ngIf="!editing[person.personId]" class="btn btn-warning btn-sm" (click)="startEdit(person.personId, $event)">Edit</button>
-          <button *ngIf="editing[person.personId]" class="btn btn-success btn-sm" (click)="saveEdit(person, $event)">Save</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <ng-template #noPeople>
-    <p>No people available.</p>
-  </ng-template>
+  <div class="content-wrapper">
+    <!-- Profile Card Wrapper -->
+    <div class="profile-card-wrapper">
+      <div class="profile-card">
+        <div class="card">
+          <div class="card-img-wrapper">
+            <img [src]="selectedPerson ? getRandomImage(selectedPerson.personId) : 'assets/card-back.png'" 
+                 alt="Card" 
+                 class="card-img-top profile-pic">
+          </div>
+          <div class="card-body" *ngIf="selectedPerson">
+            <h5 class="card-title">{{ selectedPerson.name }}</h5>
+            <div class="card-text"><strong>ID:</strong> <span>{{ selectedPerson.personId }}</span></div>
+            <div class="card-text"><strong>Current Rank:</strong> <span>{{ selectedPerson.currentRank }}</span></div>
+            <div class="card-text"><strong>Current Duty Title:</strong> <span>{{ selectedPerson.currentDutyTitle }}</span></div>
+            <div class="card-text"><strong>Career Start Date:</strong> <span>{{ selectedPerson.careerStartDate | date }}</span></div>
+            <div class="card-text"><strong>Career End Date:</strong> <span>{{ selectedPerson.careerEndDate | date }}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div *ngIf="selectedPerson" class="mt-4">
-    <h3>Astronaut Details for {{ selectedPerson.name }}</h3>
-    <table class="table table-bordered table-hover">
-      <thead class="thead-light">
-        <tr>
-          <th>Current Duty Title</th>
-          <th>Current Rank</th>
-          <th>Career Start Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ astronautDetail?.currentDutyTitle }}</td>
-          <td>{{ astronautDetail?.currentRank }}</td>
-          <td>{{ astronautDetail?.careerStartDate | date }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- People Table -->
+    <div class="table-wrapper">
+      <table *ngIf="people.length > 0; else noPeople" class="table table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Current Rank</th>
+            <th>Current Duty Title</th>
+            <th>Career Start Date</th>
+            <th>Career End Date</th>
+            <th>
+              <button class="btn btn-primary btn-sm" (click)="addPerson()">
+                <i class="fas fa-plus"></i>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="addingPerson">
+            <td>#</td>
+            <td><input [(ngModel)]="newPerson.name" class="form-control" placeholder="Enter name"></td>
+            <td><input [(ngModel)]="newPerson.currentRank" class="form-control" placeholder="Enter rank"></td>
+            <td><input [(ngModel)]="newPerson.currentDutyTitle" class="form-control" placeholder="Enter duty title"></td>
+            <td><input [(ngModel)]="newPerson.careerStartDate" class="form-control" type="date"></td>
+            <td><input [(ngModel)]="newPerson.careerEndDate" class="form-control" type="date"></td>
+            <td>
+              <button class="btn btn-success btn-sm" (click)="saveNewPerson()">
+                <i class="fas fa-check"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="cancelAddPerson()">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngFor="let person of people" (click)="selectPerson(person)" [class.table-active]="person === selectedPerson">
+            <td>{{ person.personId }}</td>
+            <td *ngIf="!editing[person.personId]">{{ person.name }}</td>
+            <td *ngIf="editing[person.personId]"><input [(ngModel)]="person.name" class="form-control"></td>
+            <td>{{ person.currentRank }}</td>
+            <td>{{ person.currentDutyTitle }}</td>
+            <td>{{ person.careerStartDate | date }}</td>
+            <td>{{ person.careerEndDate | date }}</td>
+            <td>
+              <button *ngIf="!editing[person.personId]" class="btn btn-warning btn-sm" (click)="startEdit(person.personId, $event)">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button *ngIf="editing[person.personId]" class="btn btn-success btn-sm" (click)="saveEdit(person, $event)">
+                <i class="fas fa-check"></i>
+              </button>
+              <button *ngIf="editing[person.personId]" class="btn btn-danger btn-sm" (click)="cancelEdit(person.personId, $event)">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #noPeople>
+        <p>No people available.</p>
+      </ng-template>
+    </div>
   </div>
+
   <!-- Show this button on small screens -->
   <button class="fab d-md-none" (click)="addPerson()">+</button>
 </div>

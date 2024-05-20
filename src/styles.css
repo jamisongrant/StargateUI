@@ -1,23 +1,73 @@
+.container {
+  margin-top: 20px;
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.profile-card-wrapper {
+  width: 288px;
+  height: 492px;
+  position: relative;
+  display: flex;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.profile-card-wrapper .profile-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.card-body .card-text {
+  display: flex;
+  justify-content: flex-start;
+  margin: 5px 0;
+}
+
+.card-body .card-text span {
+  margin-left: 5px;
+}
+
+.table-wrapper {
+  flex-grow: 1;
+}
+
 .fab {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 56px;
-    height: 56px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .fab:hover {
-    background-color: #0056b3;
-  }
-  
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.fab:hover {
+  background-color: #0056b3;
+}
+
+.add-person-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
