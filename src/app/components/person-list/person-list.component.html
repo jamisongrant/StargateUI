@@ -1,13 +1,19 @@
 <div class="container mt-4">
   <div class="content-wrapper">
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
     <!-- Profile Card Wrapper -->
     <div class="profile-card-wrapper">
       <div class="profile-card">
         <div class="card">
           <div class="card-img-wrapper">
-            <img [src]="selectedPerson ? getRandomImage(selectedPerson.personId) : 'assets/card-back.png'" 
-                 alt="Card" 
-                 class="card-img-top profile-pic">
+            <img 
+              [src]="selectedPerson ? getRandomImage(selectedPerson.personId) : 'assets/card-back.png'" 
+              alt="Card" 
+              class="card-img-top profile-pic"
+            >
           </div>
           <div class="card-body" *ngIf="selectedPerson">
             <h5 class="card-title">{{ selectedPerson.name }}</h5>
@@ -42,10 +48,13 @@
         <tbody>
           <tr *ngIf="addingPerson">
             <td>#</td>
-            <td><input [(ngModel)]="newPerson.name" class="form-control" placeholder="Enter name"></td>
-            <td><input [(ngModel)]="newPerson.currentRank" class="form-control" placeholder="Enter rank"></td>
-            <td><input [(ngModel)]="newPerson.currentDutyTitle" class="form-control" placeholder="Enter duty title"></td>
-            <td><input [(ngModel)]="newPerson.careerStartDate" class="form-control" type="date"></td>
+            <td>
+              <input [(ngModel)]="newPerson.name" class="form-control" placeholder="Enter name" required>
+              <div *ngIf="newPerson.name === ''" class="text-danger">Name is required</div>
+            </td>
+            <td><input [(ngModel)]="newPerson.currentRank" class="form-control" placeholder="Enter rank" required></td>
+            <td><input [(ngModel)]="newPerson.currentDutyTitle" class="form-control" placeholder="Enter duty title" required></td>
+            <td><input [(ngModel)]="newPerson.careerStartDate" class="form-control" type="date" required></td>
             <td><input [(ngModel)]="newPerson.careerEndDate" class="form-control" type="date"></td>
             <td class="action-column">
               <button class="btn btn-success btn-sm" (click)="saveNewPerson()">
@@ -56,31 +65,74 @@
               </button>
             </td>
           </tr>
-          <tr *ngFor="let person of people" (click)="selectPerson(person)" [class.table-active]="person === selectedPerson">
-            <td>{{ person.personId }}</td>
-            <td *ngIf="!editing[person.personId]">{{ person.name }}</td>
-            <td *ngIf="editing[person.personId]"><input [(ngModel)]="person.name" class="form-control"></td>
-            <td>{{ person.currentRank }}</td>
-            <td>{{ person.currentDutyTitle }}</td>
-            <td>{{ person.careerStartDate | date }}</td>
-            <td>{{ person.careerEndDate | date }}</td>
-            <td class="action-column">
-              <button *ngIf="!editing[person.personId]" class="btn btn-warning btn-sm" (click)="startEdit(person.personId, $event)">
-                <i class="fas fa-pen"></i>
-              </button>
-              <button *ngIf="editing[person.personId]" class="btn btn-success btn-sm" (click)="saveEdit(person, $event)">
-                <i class="fas fa-check"></i>
-              </button>
-              <button *ngIf="editing[person.personId]" class="btn btn-danger btn-sm" (click)="cancelEdit(person.personId, $event)">
-                <i class="fas fa-times"></i>
-              </button>
-            </td>
-          </tr>
+          <ng-container *ngFor="let person of people; let i = index">
+            <tr (click)="selectPerson(person, i)" [class.table-active]="person === selectedPerson">
+              <td>{{ person.personId }}</td>
+              <td *ngIf="!editing[person.personId]">{{ person.name }}</td>
+              <td *ngIf="editing[person.personId]"><input [(ngModel)]="person.name" class="form-control"></td>
+              <td>{{ person.currentRank }}</td>
+              <td>{{ person.currentDutyTitle }}</td>
+              <td>{{ person.careerStartDate | date }}</td>
+              <td>{{ person.careerEndDate | date }}</td>
+              <td class="action-column">
+                <button *ngIf="!editing[person.personId]" class="btn btn-warning btn-sm" (click)="startEdit(person.personId, $event)">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button *ngIf="editing[person.personId]" class="btn btn-success btn-sm" (click)="saveEdit(person, $event)">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button *ngIf="editing[person.personId]" class="btn btn-danger btn-sm" (click)="cancelEdit(person.personId, $event)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="selectedPersonIndex === i">
+              <td colspan="7">
+                <table class="table table-bordered">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Duty Title</th>
+                      <th>Rank</th>
+                      <th>Duty Start Date</th>
+                      <th>Duty End Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let detail of astronautDetails">
+                      <td>{{ detail.currentDutyTitle }}</td>
+                      <td>{{ detail.currentRank }}</td>
+                      <td>{{ detail.careerStartDate | date }}</td>
+                      <td>{{ detail.careerEndDate | date }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
       <ng-template #noPeople>
         <p>No people available.</p>
       </ng-template>
+
+      <!-- Pagination Controls -->
+      <nav *ngIf="totalItems > itemsPerPage" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages()); let i = index" [class.active]="currentPage === (i + 1)">
+            <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages()">
+            <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 
